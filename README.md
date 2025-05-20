@@ -1,1 +1,3 @@
-# Crash-Bandicoot-Wumpa-Frenzy---only-logic
+# Crash-Bandicoot-Wumpa-Frenzy
+
+# Learning game development and GDScript through this project.
