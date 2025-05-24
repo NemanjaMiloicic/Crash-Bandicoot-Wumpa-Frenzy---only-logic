@@ -24,6 +24,12 @@ func physics_update(delta: float) -> void:
 		state_owner.jump_pressed = true
 		state_owner.velocity.y = state_owner.JUMP_VELOCITY
 		change_state("JumpState")
+	
+	if not Input.is_action_pressed("crouch") and state_owner.can_stand_up():
+		if direction != 0:
+			change_state("RunState")
+		else:
+			change_state("IdleState")
 		
 	state_owner.velocity += state_owner.get_gravity() * delta
 		

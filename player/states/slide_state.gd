@@ -17,7 +17,7 @@ func physics_update(_delta: float) -> void:
 		change_state("SpinState")
 		return
 	
-	if Input.is_action_just_pressed("jump"):
+	if Input.is_action_just_pressed("jump") and state_owner.can_stand_up():
 		state_owner.jump_pressed = true
 		state_owner.velocity.y = state_owner.JUMP_VELOCITY
 		change_state("JumpState")
@@ -26,7 +26,7 @@ func physics_update(_delta: float) -> void:
 	state_owner.velocity.x =  state_owner.facing_right*state_owner.SPEED*1.25
 
 func exit() -> void:
-	state_owner.restore_collider()
+	state_owner.slide_collision_reset = true
 		
 func on_animation_finished():
 	if not state_owner.is_on_floor():

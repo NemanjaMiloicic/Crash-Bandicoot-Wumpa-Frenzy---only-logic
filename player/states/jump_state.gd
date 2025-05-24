@@ -19,6 +19,7 @@ func enter() -> void:
 
 func physics_update(delta: float) -> void:
 	if Input.is_action_just_pressed("spin") and state_owner.can_spin:
+		state_owner.jump_pressed = false
 		change_state("SpinState")
 
 	if state_owner.got_crystal and state_owner.is_on_floor():
@@ -46,18 +47,20 @@ func physics_update(delta: float) -> void:
 	if not state_owner.is_on_floor() and Input.is_action_just_pressed("crouch"):
 		state_owner.slide_leniency.start()
 	
+	
 	if state_owner.is_on_floor():
 		var collision = state_owner.get_last_slide_collision()
 		if collision:
 			var other = collision.get_collider()
 			if not other.name.begins_with("GridCrate"):
 				if not state_owner.slide_leniency.is_stopped() and Input.is_action_pressed("crouch"):
-					state_owner.check_direction(direction)
-					change_state("SlideState")
+					if Input.get_axis("move_left" , "move_right")!=0:
+						change_state("SlideState")
+					else:
+						change_state("CrouchState")
 					return 
 
 		if direction == 0:
 			change_state("IdleState")
 		else:
-			state_owner.check_direction(direction)
 			change_state("RunState")

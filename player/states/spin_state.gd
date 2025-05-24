@@ -24,7 +24,6 @@ func physics_update(delta: float) -> void:
 		return
 
 	var direction = Input.get_axis("move_left", "move_right")
-	state_owner.check_direction(direction)
 
 	if direction == 0:
 		state_owner.velocity.x = 0  

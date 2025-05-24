@@ -2,7 +2,10 @@ extends Node
 
 class_name State
 
-var state_owner : Player
+var state_owner : Node
+
+func _init(p_state_owner : Node) -> void:
+	state_owner = p_state_owner
 
 func enter() -> void:
 	pass
@@ -16,12 +19,7 @@ func physics_update(_delta: float) -> void:
 
 
 func change_state(state_name: String) -> void:
-	if not state_owner.states.has(state_name):
-		push_error("State '%s' does not exist!" % state_name)
-		return
-	
-	if state_owner.current_state == state_owner.states[state_name]:
-		return
+
 	
 	state_owner.previous_state = state_owner.current_state
 	state_owner.current_state.exit()
