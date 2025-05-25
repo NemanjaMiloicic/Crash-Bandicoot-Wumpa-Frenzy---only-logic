@@ -5,7 +5,7 @@ func enter() -> void:
 	state_owner.can_spin = false
 	state_owner.spin_cooldown.start()
 	state_owner.animated_sprite.play("spin")
-	state_owner.spin_stream_player_2d.play()
+	state_owner.spin_stream_player.play()
 
 func physics_update(delta: float) -> void:
 	state_owner.destroy_crates()

@@ -5,7 +5,7 @@ extends State
 
 func enter() -> void:
 	state_owner.animated_sprite.play("slide")
-	state_owner.slide_stream_player_2d.play()
+	state_owner.slide_stream_player.play()
 	state_owner.slide_cooldown.start()
 	state_owner.can_slide = false
 	state_owner.shrink_collider()

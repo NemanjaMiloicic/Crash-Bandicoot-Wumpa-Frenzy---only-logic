@@ -3,7 +3,7 @@ extends State
 
 func enter() -> void:
 	state_owner.animated_sprite.play("run")
-	state_owner.run_stream_player_2d.play()
+	state_owner.run_stream_player.play()
 
 func physics_update(_delta: float) -> void:
 	if state_owner.got_crystal and state_owner.is_on_floor():
@@ -40,4 +40,4 @@ func physics_update(_delta: float) -> void:
 	state_owner.velocity.x = direction * state_owner.SPEED
 
 func exit() -> void:
-	state_owner.run_stream_player_2d.stop()
+	state_owner.run_stream_player.stop()

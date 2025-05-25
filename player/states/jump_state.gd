@@ -4,7 +4,7 @@ extends State
 var slid_jumped = false
 func enter() -> void:
 	if state_owner.jump_pressed:
-		state_owner.jump_stream_player_2d.play()
+		state_owner.jump_stream_player.play()
 		
 	if state_owner.jump_pressed and (
 	state_owner.previous_state is SlideState

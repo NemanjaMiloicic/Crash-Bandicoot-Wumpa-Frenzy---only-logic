@@ -6,7 +6,7 @@ const SWING_SPEED := 90
 
 func enter() -> void:
 	state_owner.animated_sprite.play("swing")
-	state_owner.swinging_stream_player_2d.play()
+	state_owner.swinging_stream_player.play()
 
 func physics_update(_delta: float) -> void:
 	
@@ -25,4 +25,4 @@ func physics_update(_delta: float) -> void:
 		change_state("HangSpinState")
 
 func exit() -> void:
-	state_owner.swinging_stream_player_2d.stop()
+	state_owner.swinging_stream_player.stop()

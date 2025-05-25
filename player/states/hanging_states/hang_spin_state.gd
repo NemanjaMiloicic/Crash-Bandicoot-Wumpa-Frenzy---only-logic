@@ -6,7 +6,7 @@ func enter() -> void:
 	state_owner.velocity.y = 0
 	state_owner.can_spin = false
 	state_owner.spin_cooldown.start()
-	state_owner.spin_stream_player_2d.play()
+	state_owner.spin_stream_player.play()
 	state_owner.animated_sprite.play("hang_spin")
 
 

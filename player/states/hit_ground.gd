@@ -3,7 +3,7 @@ extends State
 
 func enter() -> void:
 	state_owner.animated_sprite.play("hit_ground")
-	state_owner.hit_ground_stream_player_2d.play()
+	state_owner.hit_ground_stream_player.play()
 	state_owner.shrink_collider()
 
 func exit() -> void:

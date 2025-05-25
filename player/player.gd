@@ -11,18 +11,19 @@ const JUMP_VELOCITY = -300.0
 @onready var slide_cooldown: Timer = $SlideCooldown
 @onready var slide_leniency: Timer = $SlideLeniency
 #audio
-@onready var death_stream_player_2d: AudioStreamPlayer2D = $Sounds/DeathStreamPlayer2D
-@onready var swinging_stream_player_2d: AudioStreamPlayer2D = $Sounds/SwingingStreamPlayer2D
-@onready var fly_stream_player_2d: AudioStreamPlayer2D = $Sounds/FlyStreamPlayer2D
-@onready var jump_stream_player_2d: AudioStreamPlayer2D = $Sounds/JumpStreamPlayer2D
-@onready var run_stream_player_2d: AudioStreamPlayer2D = $Sounds/RunStreamPlayer2D
-@onready var slide_stream_player_2d: AudioStreamPlayer2D = $Sounds/SlideStreamPlayer2D
-@onready var hit_ground_stream_player_2d: AudioStreamPlayer2D = $Sounds/HitGroundStreamPlayer2D
-@onready var spin_stream_player_2d: AudioStreamPlayer2D = $Sounds/SpinStreamPlayer2D
-@onready var victory_stream_player_2d: AudioStreamPlayer2D = $Sounds/VictoryStreamPlayer2D
-@onready var fire_death_stream_player_2d: AudioStreamPlayer2D = $Sounds/FireDeathStreamPlayer2D
-@onready var blink_stream_player_2d: AudioStreamPlayer2D = $Sounds/BlinkStreamPlayer2D
-@onready var electric_death_stream_player_2d: AudioStreamPlayer2D = $Sounds/ElectricDeathStreamPlayer2D
+@onready var death_stream_player: AudioStreamPlayer = $Sounds/DeathStreamPlayer
+@onready var swinging_stream_player: AudioStreamPlayer = $Sounds/SwingingStreamPlayer
+@onready var fly_stream_player: AudioStreamPlayer = $Sounds/FlyStreamPlayer
+@onready var jump_stream_player: AudioStreamPlayer = $Sounds/JumpStreamPlayer
+@onready var run_stream_player: AudioStreamPlayer = $Sounds/RunStreamPlayer
+@onready var slide_stream_player: AudioStreamPlayer = $Sounds/SlideStreamPlayer
+@onready var hit_ground_stream_player: AudioStreamPlayer = $Sounds/HitGroundStreamPlayer
+@onready var spin_stream_player: AudioStreamPlayer = $Sounds/SpinStreamPlayer
+@onready var victory_stream_player: AudioStreamPlayer = $Sounds/VictoryStreamPlayer
+@onready var fire_death_stream_player: AudioStreamPlayer = $Sounds/FireDeathStreamPlayer
+@onready var blink_stream_player: AudioStreamPlayer = $Sounds/BlinkStreamPlayer
+@onready var electric_death_stream_player: AudioStreamPlayer = $Sounds/ElectricDeathStreamPlayer
+@onready var speed_stream_player: AudioStreamPlayer = $Sounds/SpeedStreamPlayer
 
 
 #ceiling check
@@ -47,11 +48,10 @@ var previous_state : State = null
 var states = {}
 
 #death_states
-var electricity := false
-var fire := false
+var death = DeathState.DEFAULT
 
 func _ready() -> void:
-	run_stream_player_2d.stream.loop = true
+	run_stream_player.stream.loop = true
 	old_collision_shape = collision_shape_2d.shape.height
 	old_collision_position = collision_shape_2d.position.y
 	#Normal_states
@@ -66,11 +66,13 @@ func _ready() -> void:
 	states["HitGroundState"] = HitGroundState.new(self)
 	states["CrouchState"] = CrouchState.new(self)
 	states["CrawlState"] = CrawlState.new(self)
-	states["FlyState"] = FlyState.new(self)
 	#Hanging_states
 	states["HangingState"] = HangingState.new(self)
 	states["SwingState"] = SwingState.new(self)
 	states["HangSpinState"] = HangSpinState.new(self)
+	#Power_Up_States
+	states["FlyState"] = FlyState.new(self)
+	states["RocketState"] = RocketState.new(self)
 	
 	current_state = states["IdleState"]
 	current_state.enter()
@@ -104,6 +106,7 @@ func check_direction():
 		facing_right = 1
 	elif input < 0:
 		facing_right = -1
+		
 func _on_slide_cooldown_timeout() -> void:
 	can_slide = true
 	
@@ -128,3 +131,7 @@ func try_restore_collider():
 	if can_stand_up():
 		restore_collider()
 		slide_collision_reset = false
+
+
+func _on_speed_stream_player_finished() -> void:
+	speed_stream_player.play_with_random_pitch()
