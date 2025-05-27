@@ -11,10 +11,13 @@ func _on_body_entered(body: Node2D) -> void:
 		body.death = DeathState.FIRE
 	else:
 		body.death = DeathState.DEFAULT
+	
+	GameManager.instant_kill()
+	body.aku_animation.play('float')
 	body.current_state.change_state("DeadState")
 	timer.start()
 
 func _on_timer_timeout() -> void:
-	
+	GameManager.die()
 	get_tree().reload_current_scene()
 	

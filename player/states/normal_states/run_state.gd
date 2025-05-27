@@ -37,7 +37,7 @@ func physics_update(_delta: float) -> void:
 
 
 	state_owner.animated_sprite.flip_h = direction < 0
-	state_owner.velocity.x = direction * state_owner.SPEED
+	state_owner.velocity.x = direction * state_owner.speed
 
 func exit() -> void:
 	state_owner.run_stream_player.stop()

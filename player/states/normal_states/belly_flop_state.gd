@@ -6,7 +6,7 @@ const BELLY_FLOP_BOOST = -150
 func enter() -> void:
 	state_owner.animated_sprite.play("belly_flop")
 	state_owner.velocity.y = BELLY_FLOP_BOOST
-	state_owner.velocity.x = move_toward(state_owner.velocity.x, 0, state_owner.SPEED)
+	state_owner.velocity.x = move_toward(state_owner.velocity.x, 0, state_owner.speed)
 	
 func physics_update(delta: float) -> void:
 	state_owner.destroy_crates()

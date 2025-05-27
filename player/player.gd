@@ -2,14 +2,21 @@ class_name  Player
 extends CharacterBody2D
 
 const SPEED = 115.0
+const MAX_AKU_SPEED = 150.0
 const JUMP_VELOCITY = -300.0
+var speed = SPEED
+
 
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
+@onready var aku_aku_sprite_2d: AnimatedSprite2D = $AkuAkuSprite2D
+
 @onready var collision_shape_2d: CollisionShape2D = $CollisionShape2D
 #timers
 @onready var spin_cooldown: Timer = $SpinCooldown
 @onready var slide_cooldown: Timer = $SlideCooldown
 @onready var slide_leniency: Timer = $SlideLeniency
+@onready var invincibility_time: Timer = $InvincibilityTime
+
 #audio
 @onready var death_stream_player: AudioStreamPlayer = $Sounds/DeathStreamPlayer
 @onready var swinging_stream_player: AudioStreamPlayer = $Sounds/SwingingStreamPlayer
@@ -25,13 +32,16 @@ const JUMP_VELOCITY = -300.0
 @onready var electric_death_stream_player: AudioStreamPlayer = $Sounds/ElectricDeathStreamPlayer
 @onready var speed_stream_player: AudioStreamPlayer = $Sounds/SpeedStreamPlayer
 
+#animations
+@onready var animation_player: AnimationPlayer = $AnimatedSprite2D/AnimationPlayer
+@onready var aku_animation: AnimationPlayer = $AkuAnimation
 
 #ceiling check
 @onready var ceiling_check_area_2d: Area2D = $CeilingCheckArea2D
 
 const SLIDE_HEIGHT_REDUCTION = 10
 const SLIDE_JUMP_BOOST = -4
-
+const AKU_SPEED = 10
 var got_crystal := false 
 var can_spin := true
 var can_slide := true
@@ -40,6 +50,7 @@ var facing_right := 1
 var jump_pressed := false
 var slide_jump = false
 var slide_collision_reset = false
+
 var old_collision_shape
 var old_collision_position
 
@@ -47,8 +58,16 @@ var current_state : State = null
 var previous_state : State = null
 var states = {}
 
+var AKU_POSITION_LEFT = Vector2(20 , -30)
+var AKU_POSITION_RIGHT = Vector2(-20 , -30)
+var MAX_AKU_POSITION_LEFT = Vector2(6,-20)
+var MAX_AKU_POSITION_RIGHT = Vector2(-6,-20)
+var aku_target_position = Vector2.ZERO
+
 #death_states
 var death = DeathState.DEFAULT
+
+var bobbing_animation = false
 
 func _ready() -> void:
 	run_stream_player.stream.loop = true
@@ -79,6 +98,12 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	
+	if GameManager.aku_protection == GameManager.MAX_AKU:
+		animation_player.play("flash")
+		speed = MAX_AKU_SPEED
+	else:
+		speed = SPEED
+	
 	if current_state:
 		current_state.physics_update(delta)
 	# only restore collider if there isnt any obstacle
@@ -86,8 +111,11 @@ func _physics_process(delta: float) -> void:
 		try_restore_collider()
 	
 	# move after velocity changes
-	check_direction()
+	check_direction()	
 	move_and_slide()
+	prepare_aku()
+	move_aku(delta)
+	check_for_bobbing()
 	
 
 
@@ -135,3 +163,32 @@ func try_restore_collider():
 
 func _on_speed_stream_player_finished() -> void:
 	speed_stream_player.play_with_random_pitch()
+
+func prepare_aku():
+	if GameManager.aku_protection == 0:
+		aku_aku_sprite_2d.play('not_here')
+	elif GameManager.aku_protection == 1:
+		aku_aku_sprite_2d.play("float")
+	elif GameManager.aku_protection == 2:
+		aku_aku_sprite_2d.play("gold_float")
+	elif GameManager.aku_protection == GameManager.MAX_AKU:
+		aku_animation.stop()
+		aku_aku_sprite_2d.play("max_aku_float")
+	# Flip
+	if facing_right == 1:
+		aku_aku_sprite_2d.flip_h = false
+		aku_target_position = AKU_POSITION_RIGHT if GameManager.aku_protection != GameManager.MAX_AKU else MAX_AKU_POSITION_LEFT
+	else:
+		aku_aku_sprite_2d.flip_h = true
+		aku_target_position = AKU_POSITION_LEFT if GameManager.aku_protection != GameManager.MAX_AKU else MAX_AKU_POSITION_RIGHT
+
+func move_aku(delta):
+	aku_aku_sprite_2d.position = aku_aku_sprite_2d.position.lerp(aku_target_position, delta * AKU_SPEED)
+
+func check_for_bobbing():
+	if GameManager.check_max_aku():
+		bobbing_animation = true
+	
+	if bobbing_animation and GameManager.aku_protection == GameManager.MAX_AKU-1:
+		aku_animation.play()
+		bobbing_animation = false

@@ -1,7 +1,7 @@
 class_name SlideState
 extends State
 
-
+var current_facing 
 
 func enter() -> void:
 	state_owner.animated_sprite.play("slide")
@@ -9,6 +9,7 @@ func enter() -> void:
 	state_owner.slide_cooldown.start()
 	state_owner.can_slide = false
 	state_owner.shrink_collider()
+	current_facing = state_owner.facing_right
 	
 func physics_update(_delta: float) -> void:
 	state_owner.destroy_crates()
@@ -22,8 +23,8 @@ func physics_update(_delta: float) -> void:
 		state_owner.velocity.y = state_owner.JUMP_VELOCITY
 		change_state("JumpState")
 		return
-
-	state_owner.velocity.x =  state_owner.facing_right*state_owner.SPEED*1.25
+	
+	state_owner.velocity.x =  current_facing*state_owner.SPEED*1.25
 
 func exit() -> void:
 	state_owner.slide_collision_reset = true

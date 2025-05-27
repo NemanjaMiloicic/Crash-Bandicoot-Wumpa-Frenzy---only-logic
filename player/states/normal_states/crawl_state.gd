@@ -16,7 +16,7 @@ func physics_update(delta: float) -> void:
 	
 	if direction != 0:
 		state_owner.animated_sprite.flip_h = direction < 0
-		state_owner.velocity.x = direction * state_owner.SPEED/2.5
+		state_owner.velocity.x = direction * state_owner.speed/2.5
 	else:
 		change_state("CrouchState")
 		

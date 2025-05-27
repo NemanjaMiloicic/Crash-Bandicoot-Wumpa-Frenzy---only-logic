@@ -31,7 +31,7 @@ func physics_update(delta: float) -> void:
 
 
 	state_owner.animated_sprite.flip_h = direction < 0
-	state_owner.velocity.x = direction * state_owner.SPEED
+	state_owner.velocity.x = direction * state_owner.speed
 
 func on_animation_finished() -> void:
 	change_state("IdleState")
