@@ -17,7 +17,10 @@ func enter() -> void:
 		
 	elif state_owner.death == DeathState.FIRE:
 		state_owner.animated_sprite.play("fire_death")
-		
+	
+	elif state_owner.death == DeathState.EXPLOSION:
+		state_owner.animated_sprite.play("explosion_death")
+	
 	else:
 		state_owner.animated_sprite.play("default_death")
 	state_owner.velocity = Vector2.ZERO

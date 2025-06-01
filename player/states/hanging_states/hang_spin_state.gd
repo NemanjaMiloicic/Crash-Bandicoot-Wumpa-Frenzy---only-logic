@@ -2,6 +2,7 @@ class_name HangSpinState
 extends State
 
 func enter() -> void:
+	state_owner.attacking = true
 	state_owner.velocity.x = 0
 	state_owner.velocity.y = 0
 	state_owner.can_spin = false
@@ -15,3 +16,6 @@ func physics_update(_delta: float) -> void:
 	
 func on_animation_finished():
 	change_state("HangingState")
+
+func exit() -> void:
+	state_owner.attacking = false

@@ -2,6 +2,7 @@ class_name SpinState
 extends State
 
 func enter() -> void:
+	state_owner.attacking = true
 	state_owner.can_spin = false
 	state_owner.spin_cooldown.start()
 	state_owner.animated_sprite.play("spin")
@@ -35,3 +36,6 @@ func physics_update(delta: float) -> void:
 
 func on_animation_finished() -> void:
 	change_state("IdleState")
+
+func exit() -> void:
+	state_owner.attacking = false

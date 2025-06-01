@@ -4,6 +4,7 @@ extends State
 var current_facing 
 
 func enter() -> void:
+	state_owner.attacking = true
 	state_owner.animated_sprite.play("slide")
 	state_owner.slide_stream_player.play()
 	state_owner.slide_cooldown.start()
@@ -27,6 +28,7 @@ func physics_update(_delta: float) -> void:
 	state_owner.velocity.x =  current_facing*state_owner.SPEED*1.25
 
 func exit() -> void:
+	state_owner.attacking = false
 	state_owner.slide_collision_reset = true
 		
 func on_animation_finished():

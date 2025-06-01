@@ -10,7 +10,7 @@ extends Area2D
 
 var entered_once = false		
 func _on_body_entered(body: Node2D) -> void:
-	if body.name == "CharacterBody2D":
+	if body.is_in_group("player"):
 		if not entered_once:
 			GameManager.add_wumpas()
 			audio_stream_player.play()

@@ -7,12 +7,20 @@ var total_crates_in_level := 0
 var hud : Node
 var current_level : Node
 var collected_lives = []
+var used_life_crates = []
+var collected_crates = []
 var aku_protection :=0
 var timer
 const MAX_AKU := 3
 const MAX_WUMPAS_LIVES := 99
 var play_back_pos
 var invincibility_ran_out := false
+var checkpoint_just_hit := false
+var num_collected_crates := 0
+var currently_collected_crates = []
+var player_position = null
+var currently_collected_gems = []
+var collected_gems = []
 
 @onready var max_aku_state: Timer = $MaxAkuState
 @onready var hit_sound: AudioStreamPlayer = $HitSound
@@ -21,10 +29,14 @@ var invincibility_ran_out := false
 
 
 func set_current_level(level: Node , p_hud : Node) -> void:
+	currently_collected_crates.clear()
+	randomize()
 	current_level = level
 	total_crates_in_level = count_boxes_in_level()
 	hud = p_hud
 	hud.update_hud(wumpas, crates, total_crates_in_level, lives)
+	respawn_life_crates_as_normal()
+	set_player_position()
 
 func count_boxes_in_level() -> int:
 	var crates_node = current_level.get_node("Crates")
@@ -59,11 +71,19 @@ func add_life(global_position : Vector2) -> void:
 
 func die() -> void:
 	if lives == 0:
-		print("Game over!")
+		collected_crates = []
+		collected_gems = []
+		collected_lives = []
+		used_life_crates = []
+		player_position = null
+		wumpas = 0
+		num_collected_crates = 0
+		crates = 0
 		#to-do
 		lives = 4
 	else:
 		lives -= 1
+	crates = 0
 	hud.update_hud(wumpas , crates , total_crates_in_level , lives)
 	
 func got_gem() -> bool:
@@ -116,3 +136,33 @@ func _on_invincibility_music_finished() -> void:
 	
 func check_max_aku() -> bool:
 	return aku_protection == MAX_AKU
+
+func respawn_life_crates_as_normal():
+	var normal_crate_scene = preload("res://scenes/crates/normal_crate.tscn")
+	
+	for pos in used_life_crates:
+		var crate = normal_crate_scene.instantiate()
+		crate.global_position = pos
+		get_tree().current_scene.add_child(crate)
+
+func checkpoint_hit() -> void:
+	checkpoint_just_hit = true
+	num_collected_crates = crates+1
+	collected_crates.append_array(currently_collected_crates)
+	collected_gems.append_array(currently_collected_gems)
+	
+func check_for_checkpoint() -> void:
+	crates = num_collected_crates
+	checkpoint_just_hit = false
+
+func set_player_position() -> void:
+	if player_position:
+		var player = current_level.get_node("CharacterBody2D")
+		var camera = player.get_node("Camera2D")
+		if player:
+			player.position = player_position
+			camera.position_smoothing_enabled = false
+			camera.reset_smoothing()
+			camera.global_position = player_position
+			camera.position_smoothing_enabled = true
+			camera.reset_smoothing()

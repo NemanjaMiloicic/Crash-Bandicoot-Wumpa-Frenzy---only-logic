@@ -16,7 +16,7 @@ func enter() -> void:
 		state_owner.animated_sprite.flip_h = (direction < 0)
 
 func physics_update(_delta: float) -> void:
-	
+	state_owner.destroy_crates()
 	if current_speed < MAX_SPEED:
 		current_speed += ACCELERATION
 	
@@ -31,10 +31,13 @@ func physics_update(_delta: float) -> void:
 	var collided_with_wall =  state_owner.is_on_wall() 
 	
 	if collided_with_wall:
-		if state_owner.is_on_floor():
-			change_state("IdleState")
-		else:
-			change_state("JumpState")
+		var collision = state_owner.get_last_slide_collision()
+		var collider = collision.get_collider()
+		if not collider.is_in_group("crates"):
+			if state_owner.is_on_floor():
+				change_state("IdleState")
+			else:
+				change_state("JumpState")
 
 func exit() -> void :
 	state_owner.speed_stream_player.stop()

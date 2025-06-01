@@ -5,9 +5,8 @@ extends Area2D
 
 var entered_once = false
 
-
 func _on_body_entered(body: Node2D) -> void:
-		if body.name == "CharacterBody2D":
+		if body.is_in_group("player"):
 			if not entered_once:
 				GameManager.got_aku()
 				if GameManager.aku_protection != GameManager.MAX_AKU:

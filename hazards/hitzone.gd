@@ -12,10 +12,13 @@ func _on_body_entered(body: Node2D) -> void:
 	is_in_body = true
 	player = body
 	var parent = get_parent()
-	if parent and parent.name.begins_with("ElectricFence"):
+	if parent and parent.is_in_group("electric"):
 		body.death = DeathState.ELECTRICITY
-	elif parent and parent.name.begins_with("Bonfire"):
+	elif parent and parent.is_in_group("fire"):
 		body.death = DeathState.FIRE
+	
+	elif parent and parent.is_in_group("explosion"):
+		body.death = DeathState.EXPLOSION
 	else:
 		body.death = DeathState.DEFAULT
 	

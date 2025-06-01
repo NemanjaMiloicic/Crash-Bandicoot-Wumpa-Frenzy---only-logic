@@ -31,6 +31,7 @@ var speed = SPEED
 @onready var blink_stream_player: AudioStreamPlayer = $Sounds/BlinkStreamPlayer
 @onready var electric_death_stream_player: AudioStreamPlayer = $Sounds/ElectricDeathStreamPlayer
 @onready var speed_stream_player: AudioStreamPlayer = $Sounds/SpeedStreamPlayer
+@onready var pogo_stream_player: AudioStreamPlayer = $Sounds/PogoStreamPlayer
 
 #animations
 @onready var animation_player: AnimationPlayer = $AnimatedSprite2D/AnimationPlayer
@@ -50,7 +51,8 @@ var facing_right := 1
 var jump_pressed := false
 var slide_jump = false
 var slide_collision_reset = false
-
+var attacking := false
+var slid_jumped := false
 var old_collision_shape
 var old_collision_position
 
@@ -92,6 +94,7 @@ func _ready() -> void:
 	#Power_Up_States
 	states["FlyState"] = FlyState.new(self)
 	states["RocketState"] = RocketState.new(self)
+	states["PogoState"] = PogoState.new(self)
 	
 	current_state = states["IdleState"]
 	current_state.enter()
@@ -100,6 +103,7 @@ func _physics_process(delta: float) -> void:
 	
 	if GameManager.aku_protection == GameManager.MAX_AKU:
 		animation_player.play("flash")
+		destroy_crates()
 		speed = MAX_AKU_SPEED
 	else:
 		speed = SPEED
@@ -118,12 +122,8 @@ func _physics_process(delta: float) -> void:
 	check_for_bobbing()
 	
 
-
 func _on_animated_sprite_2d_animation_finished() -> void:
 	current_state.on_animation_finished()
-
-	
-
 
 func _on_spin_cooldown_timeout() -> void:
 	can_spin = true
@@ -141,7 +141,9 @@ func _on_slide_cooldown_timeout() -> void:
 func destroy_crates() -> void:
 	if near_crates.size()>0:
 		for crate in near_crates:
-			crate.destroy()
+			crate.destroy(near_crates)
+			GameManager.currently_collected_crates.append(crate.global_position)
+			GameManager.add_crates()
 		near_crates.clear()
 
 func can_stand_up() -> bool:
