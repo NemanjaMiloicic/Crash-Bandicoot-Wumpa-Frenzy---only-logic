@@ -6,9 +6,10 @@ var lives := 4
 var total_crates_in_level := 0
 var hud : Node
 var current_level : Node
-var collected_lives = []
 var used_life_crates = []
 var collected_crates = []
+var activated_switches = []
+var currently_activated_switches = []
 var aku_protection :=0
 var timer
 const MAX_AKU := 3
@@ -21,6 +22,7 @@ var currently_collected_crates = []
 var player_position = null
 var currently_collected_gems = []
 var collected_gems = []
+var collected_invisible_life = []
 
 @onready var max_aku_state: Timer = $MaxAkuState
 @onready var hit_sound: AudioStreamPlayer = $HitSound
@@ -40,8 +42,21 @@ func set_current_level(level: Node , p_hud : Node) -> void:
 
 func count_boxes_in_level() -> int:
 	var crates_node = current_level.get_node("Crates")
-	return crates_node.get_child_count()
-	
+	var count = 0
+
+	for child in crates_node.get_children():
+		if child.is_in_group("metal_crate"):
+			for metal_child in child.get_children():
+				if metal_child.is_in_group("crates") and not metal_child.is_in_group("metal_crate"):
+					count += 1
+		else:
+			if child.is_in_group("crates"):
+				count += 1
+
+	return count
+
+
+
 func add_wumpas() -> void:
 	if wumpas == MAX_WUMPAS_LIVES:
 		wumpas = 0
@@ -61,8 +76,7 @@ func add_life_with_wumpas() -> void:
 		lives += 1
 	hud.update_hud(wumpas , crates , total_crates_in_level , lives)
 
-func add_life(global_position : Vector2) -> void:
-	collected_lives.append(global_position)
+func add_life() -> void:
 	if lives == MAX_WUMPAS_LIVES:
 		lives = MAX_WUMPAS_LIVES
 	else:
@@ -73,8 +87,9 @@ func die() -> void:
 	if lives == 0:
 		collected_crates = []
 		collected_gems = []
-		collected_lives = []
 		used_life_crates = []
+		activated_switches = []
+		collected_invisible_life = []
 		player_position = null
 		wumpas = 0
 		num_collected_crates = 0
@@ -150,6 +165,7 @@ func checkpoint_hit() -> void:
 	num_collected_crates = crates+1
 	collected_crates.append_array(currently_collected_crates)
 	collected_gems.append_array(currently_collected_gems)
+	activated_switches.append_array(currently_activated_switches)
 	
 func check_for_checkpoint() -> void:
 	crates = num_collected_crates

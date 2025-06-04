@@ -3,9 +3,9 @@ extends NormalCrate
 
 func _ready() -> void:
 	super._ready()
-	var wumpa_scene = load("res://scenes/collectibles/wumpa_fruit.tscn")
-	var life_scene = load("res://scenes/collectibles/life.tscn")
-	var aku_aku_scene = load("res://scenes/power_ups/aku_aku_power_up.tscn")
+	var wumpa_scene = preload("res://scenes/collectibles/wumpa_fruit_x_5.tscn")
+	var life_scene = preload("res://scenes/collectibles/life.tscn")
+	var aku_aku_scene = preload("res://scenes/power_ups/aku_aku_power_up.tscn")
 	
 	var rand = randi() % 100
 	

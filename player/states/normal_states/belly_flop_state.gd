@@ -11,13 +11,17 @@ func enter() -> void:
 	
 func physics_update(delta: float) -> void:
 	state_owner.destroy_crates()
+	state_owner.destroy_armored_crates()
 	state_owner.velocity += state_owner.get_gravity() * delta
 	
 	if state_owner.is_on_floor():
 		var collision = state_owner.get_last_slide_collision()
 		if collision:
 			var other = collision.get_collider()
-			if not other.is_in_group("crates"):
+			if other.is_in_group("crates"):
+				if other.is_in_group("metal_crate"):
+					change_state("HitGroundState")
+			else:
 				change_state("HitGroundState")
 
 func exit() -> void:

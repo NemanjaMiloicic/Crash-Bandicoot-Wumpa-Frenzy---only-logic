@@ -47,6 +47,8 @@ var got_crystal := false
 var can_spin := true
 var can_slide := true
 var near_crates = []
+var near_metal_crates = []
+var near_armored_crates = []
 var facing_right := 1
 var jump_pressed := false
 var slide_jump = false
@@ -139,12 +141,42 @@ func _on_slide_cooldown_timeout() -> void:
 	can_slide = true
 	
 func destroy_crates() -> void:
-	if near_crates.size()>0:
+	if near_crates.size() > 0:
 		for crate in near_crates:
-			crate.destroy(near_crates)
-			GameManager.currently_collected_crates.append(crate.global_position)
+			if is_instance_valid(crate):
+				crate.destroy(near_crates)
+				GameManager.currently_collected_crates.append(crate.global_position)
+				GameManager.add_crates()
+			else:
+				near_crates.erase(crate)
+			
+
+	if near_metal_crates.size() > 0:
+		for crate in near_metal_crates:
+			if is_instance_valid(crate):
+				crate.activate()
+			else:
+				near_metal_crates.erase(crate)
+
+		
+func destroy_armored_crates() -> void:
+	for crate in near_armored_crates.duplicate():
+		if is_instance_valid(crate):
+			var pos = crate.global_position
+			crate.destroy(near_armored_crates)
+			GameManager.currently_collected_crates.append(pos)
 			GameManager.add_crates()
-		near_crates.clear()
+		else:
+			near_armored_crates.erase(crate)
+
+	for crate in near_metal_crates.duplicate():
+		if is_instance_valid(crate):
+			crate.activate()
+		else:
+			near_metal_crates.erase(crate)
+
+		
+	
 
 func can_stand_up() -> bool:
 	return ceiling_check_area_2d.get_overlapping_bodies().is_empty()

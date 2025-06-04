@@ -1,15 +1,19 @@
 extends Area2D
 
 @onready var audio_stream_player: AudioStreamPlayer = $AudioStreamPlayer
+
+
 @onready var sprite_2d: Sprite2D = $Sprite2D
 
-var entered_once = false
 
-		
+
+
+var entered_once = false		
 func _on_body_entered(body: Node2D) -> void:
 	if body.is_in_group("player"):
 		if not entered_once:
-			GameManager.add_life()
+			for i in range(5):
+				GameManager.add_wumpas()
 			audio_stream_player.play()
 			entered_once = true
 			sprite_2d.visible = false

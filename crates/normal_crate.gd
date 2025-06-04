@@ -8,13 +8,13 @@ var animation := "broken_crate"
 @onready var sprite_2d: Sprite2D = $Sprite2D
 @onready var collision_shape_2d: CollisionShape2D = $CollisionShape2D
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
-@onready var broken_crate: AudioStreamPlayer = $BrokenCrate
+@onready var broken_crate: AudioStreamPlayer2D = $BrokenCrate
 @onready var ray_cast_2d: RayCast2D = $RayCast2D
 var drop_scene
 func _ready() -> void:
 	if GameManager.collected_crates.has(global_position):	
 		queue_free()
-	drop_scene = load("res://scenes/collectibles/wumpa_fruit.tscn")
+	drop_scene = preload("res://scenes/collectibles/wumpa_fruit.tscn")
 	
 
 
@@ -44,9 +44,7 @@ func destroy(near_crates):
 		animated_sprite_2d.play(animation)
 	broken = true
 	GameManager.currently_collected_crates.append(global_position)
-	if is_in_group('exploding_crate'):
-		print('to do')
-	else:
+	if not is_in_group('exploding_crate'):
 		broken_crate.play()
 	if ray_cast_2d.is_colliding() and animation:
 		var collision_point = ray_cast_2d.get_collision_point()
@@ -68,7 +66,8 @@ func _on_top_body_entered(body: Node2D) -> void:
 	if broken:
 		return
 	
-	bounce_of_crate(body , true)
+	CrateHelper.bounce_of_crate(self , body , true)
+
 
 
 func _on_bottom_body_entered(body: Node2D) -> void:
@@ -81,15 +80,9 @@ func _on_bottom_body_entered(body: Node2D) -> void:
 			destroy(body.near_crates)
 			GameManager.add_crates()
 
-func bounce_of_crate(body : Node2D , counted : bool) -> void:
-	if body.is_in_group("player"):
-		if global_position.y > body.global_position.y and not body.attacking and body.current_state is JumpState:
-			body.animated_sprite.play("jump")
-			if not body.slid_jumped:
-				body.velocity.y = body.JUMP_VELOCITY - 40
-			else:
-				body.velocity.y = body.JUMP_VELOCITY + 20 
-			body.move_and_slide()
-			if counted:
-				destroy(body.near_crates)
-				GameManager.add_crates()
+	
+
+func explode_crate():
+	GameManager.currently_collected_crates.append(global_position)
+	broken = true
+	queue_free()
