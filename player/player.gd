@@ -32,6 +32,8 @@ var speed = SPEED
 @onready var electric_death_stream_player: AudioStreamPlayer = $Sounds/ElectricDeathStreamPlayer
 @onready var speed_stream_player: AudioStreamPlayer = $Sounds/SpeedStreamPlayer
 @onready var pogo_stream_player: AudioStreamPlayer = $Sounds/PogoStreamPlayer
+@onready var jetboard_running: AudioStreamPlayer = $Sounds/JetboardRunning
+@onready var jetboard_boost: AudioStreamPlayer = $Sounds/JetboardBoost
 
 #animations
 @onready var animation_player: AnimationPlayer = $AnimatedSprite2D/AnimationPlayer
@@ -95,8 +97,12 @@ func _ready() -> void:
 	states["HangSpinState"] = HangSpinState.new(self)
 	#Power_Up_States
 	states["FlyState"] = FlyState.new(self)
+	states["FlySpinState"] = FlySpinState.new(self)
 	states["RocketState"] = RocketState.new(self)
 	states["PogoState"] = PogoState.new(self)
+	states["JetBoardIdleState"] = JetBoardIdleState.new(self)
+	states["JetBoardMovingState"] = JetBoardMovingState.new(self)
+	states["JetBoardBoostState"] = JetBoardBoostState.new(self)
 	
 	current_state = states["IdleState"]
 	current_state.enter()
@@ -175,8 +181,34 @@ func destroy_armored_crates() -> void:
 		else:
 			near_metal_crates.erase(crate)
 
+func destroy_crates_activate_tnt() -> void:
+	if near_crates.size() > 0:
+		for crate in near_crates:
+			if is_instance_valid(crate):
+				if crate is TntCrate:
+					crate.activate()
+				else:
+					crate.destroy(near_crates)
+					GameManager.currently_collected_crates.append(crate.global_position)
+					GameManager.add_crates()
+			else:
+				near_crates.erase(crate)
+			
+
+	if near_metal_crates.size() > 0:
+		for crate in near_metal_crates:
+			if is_instance_valid(crate):
+				crate.activate()
+			else:
+				near_metal_crates.erase(crate)
 		
-	
+
+func activate_tnt_by_touch():
+	if near_crates.size() > 0:
+		for crate in near_crates:
+			if is_instance_valid(crate):
+				if crate is TntCrate:
+					crate.activate()
 
 func can_stand_up() -> bool:
 	return ceiling_check_area_2d.get_overlapping_bodies().is_empty()

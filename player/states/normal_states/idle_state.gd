@@ -17,6 +17,10 @@ func physics_update(_delta: float) -> void:
 	
 	if Input.is_key_pressed(KEY_J):
 		change_state("PogoState")
+		
+	if Input.is_key_pressed(KEY_W):
+		change_state("JetBoardIdleState")
+	#end testing
 	
 	if Input.is_action_just_pressed("jump"):
 		state_owner.jump_pressed = true

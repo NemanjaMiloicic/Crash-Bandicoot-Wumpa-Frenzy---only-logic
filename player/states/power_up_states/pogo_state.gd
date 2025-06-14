@@ -13,7 +13,7 @@ func enter() -> void:
 	lockout_active = false
 
 func physics_update(delta: float) -> void:
-	state_owner.destroy_crates()
+	state_owner.destroy_crates_activate_tnt()
 	if Input.is_action_just_pressed("jump"):
 		change_state("JumpState")
 	if not state_owner.is_on_floor():

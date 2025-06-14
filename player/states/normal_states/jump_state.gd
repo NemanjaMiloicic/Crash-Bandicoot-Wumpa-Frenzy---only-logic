@@ -18,6 +18,9 @@ func enter() -> void:
 		state_owner.animated_sprite.play("jump")
 
 func physics_update(delta: float) -> void:
+	
+	var gravity = state_owner.get_gravity()
+	
 	if Input.is_action_just_pressed("spin") and state_owner.can_spin:
 		state_owner.jump_pressed = false
 		change_state("SpinState")
@@ -26,9 +29,15 @@ func physics_update(delta: float) -> void:
 	if state_owner.got_crystal and state_owner.is_on_floor():
 		change_state("VictoryState")
 		return
-
+	
+	elif state_owner.velocity.y < 0 and not Input.is_action_pressed("jump"):
+		gravity *= 1.5
+	
+	elif state_owner.velocity.y < 0 and Input.is_action_pressed("jump"):
+		gravity *= 0.88  # slabiji efekat gravitacije
+	
 	# Gravity
-	var gravity_effect = state_owner.get_gravity() * delta
+	var gravity_effect = gravity * delta
 	if state_owner.slid_jumped:
 		gravity_effect += Vector2(0, state_owner.SLIDE_JUMP_BOOST)
 	state_owner.velocity += gravity_effect

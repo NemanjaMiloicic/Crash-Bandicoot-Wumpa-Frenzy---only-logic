@@ -5,7 +5,7 @@ extends Area2D
 var player
 var is_in_body = false
 func _on_body_entered(body: Node2D) -> void:
-	if body.name != "CharacterBody2D":
+	if not body.is_in_group("player"):
 		return
 	
 	#kind of death

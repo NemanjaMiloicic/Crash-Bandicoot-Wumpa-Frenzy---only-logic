@@ -26,16 +26,15 @@ func physics_update(delta: float) -> void:
 
 	var direction = Input.get_axis("move_left", "move_right")
 
-	if direction == 0:
-		state_owner.velocity.x = 0  
-		return
-
 
 	state_owner.animated_sprite.flip_h = direction < 0
 	state_owner.velocity.x = direction * state_owner.speed
 
 func on_animation_finished() -> void:
-	change_state("IdleState")
+	if state_owner.is_on_floor():
+		change_state("IdleState")
+	else:
+		change_state("JumpState")
 
 func exit() -> void:
 	state_owner.attacking = false

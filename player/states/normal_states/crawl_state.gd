@@ -1,6 +1,7 @@
 class_name CrawlState
 extends State
 
+const EXTRA := 20
 
 func enter() -> void:
 	state_owner.animated_sprite.play("crawl")
@@ -22,7 +23,7 @@ func physics_update(delta: float) -> void:
 		
 	if Input.is_action_just_pressed("jump") and state_owner.can_stand_up():
 		state_owner.jump_pressed = true
-		state_owner.velocity.y = state_owner.JUMP_VELOCITY
+		state_owner.velocity.y = state_owner.JUMP_VELOCITY - EXTRA
 		change_state("JumpState")
 	
 	if not Input.is_action_pressed("crouch") and state_owner.can_stand_up():
